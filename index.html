@@ -174,8 +174,73 @@ function displayMeals(b, l, d, f, total) {
     }
     summaryHtml += `</div><div style="text-align:center;margin-top:20px;font-size:0.9em;opacity:0.9">绿色表示达标 | 黄色表示接近目标 | 红色表示偏离目标</div></div>`;
     document.getElementById('total-summary').innerHTML = summaryHtml;
-}
+}// 情绪精灵状态更新
+const allGood = ['热量','脂肪','碳水化合物','蛋白质','膳食纤维']
+        .every(n => checkRange(total[n], nutritionTargets[n]) === 'good');
+document.getElementById('emotionChar').className = allGood ? 'char green' : 'char red';
 window.onload = generateMeals;
 </script>
+<!-- ===== 情绪精灵（替换原小球）===== -->
+<div id="emotionChar" class="char green">
+  <svg viewBox="0 0 120 120" width="120" height="120">
+    <!-- 头 -->
+    <circle cx="60" cy="60" r="50" class="face"/>
+    <!-- 眉毛 -->
+    <g class="brows">
+      <path d="M35 45 L50 40" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+      <path d="M70 40 L85 45" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+    </g>
+    <!-- 眼睛 -->
+    <g class="eyes">
+      <circle cx="45" cy="55" r="4" class="eye"/>
+      <circle cx="75" cy="55" r="4" class="eye"/>
+    </g>
+    <!-- 嘴巴 -->
+    <path class="mouth" d="M40 75 Q60 85 80 75" stroke="#333" stroke-width="3"
+          fill="none" stroke-linecap="round"/>
+    <!-- 双手交叉 ✖️ -->
+    <g class="arms">
+      <path d="M30 85 L50 70" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+      <path d="M90 85 L70 70" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    <!-- 愤怒符号 💢 -->
+    <text class="anger" x="60" y="20" text-anchor="middle">💢</text>
+  </svg>
+</div>
+
+<style>
+.char {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 120px;
+  height: 120px;
+  transition: transform 0.4s;
+}
+.char.green { animation: jump 0.8s infinite; }
+.char.red   { animation: shake 0.4s infinite; }
+
+/* 颜色切换 */
+.char.green .face { fill: #28a745; }
+.char.red   .face { fill: #dc3545; }
+.char.green .brows { display: none; }
+.char.red   .brows { display: block; }
+.char.green .mouth { d: path("M40 75 Q60 85 80 75"); } /* 笑 */
+.char.red   .mouth { d: path("M40 85 Q60 75 80 85"); } /* 怒 */
+.char.green .arms { display: none; }
+.char.red   .arms { display: block; }
+.char.green .anger { display: none; }
+.char.red   .anger { display: block; font-size: 20px; }
+
+@keyframes jump {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-15px); }
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0) rotate(0); }
+  25%     { transform: translateX(-6px) rotate(-3deg); }
+  75%     { transform: translateX(6px) rotate(3deg); }
+}
+</style>
 </body>
 </html>
